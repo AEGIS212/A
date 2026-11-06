@@ -1,0 +1,13 @@
+node_modules
+.env
+.git
+*.log
+data.json
+data.json.prev
+licenses.json
+settings.json
+logs
+backups
+tickets
+state
+deploy
