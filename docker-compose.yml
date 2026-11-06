@@ -1,0 +1,36 @@
+services:
+  guardian:
+    build: .
+    container_name: guardian
+    restart: unless-stopped
+    env_file: .env
+    expose:
+      - "3000"
+    # حالة البوت محفوظة خارج الحاوية، فما تضيع عند التحديث
+    volumes:
+      - ./state/data.json:/app/data.json
+      - ./state/licenses.json:/app/licenses.json
+      - ./state/settings.json:/app/settings.json
+      - ./state/logs:/app/logs
+      - ./state/backups:/app/backups
+      - ./state/tickets:/app/tickets
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: guardian-caddy
+    restart: unless-stopped
+    depends_on:
+      - guardian
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DOMAIN=${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
